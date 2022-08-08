@@ -751,6 +751,15 @@ const Home = () => {
         />
       </GiveWrap>
       <SectionHr />
+      <SectionHeader>마음 전하실 곳</SectionHeader>
+      <GiveWrap>
+        <p>
+          <strong>신부측</strong> (고정현)
+          <br />
+          <CopyText text="국민은행 787-21-0243-317" />
+        </p>
+      </GiveWrap>
+      <SectionHr />
       <SectionHeader>축하의 한마디</SectionHeader>
       <WriteSectionSubHeader>
         <p>🤵🏻신랑측</p>
