@@ -12,8 +12,6 @@ const PayCopy = ({ handleClose }: Props) => {
     border: none;
     background: none;
     color: #999;
-    width: 20px;
-    height: 20px;
 
     svg {
       width: 20px;

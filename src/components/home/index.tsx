@@ -395,6 +395,8 @@ const PayWrap = styled.button<{
   margin-bottom: 10px;
   border-radius: 20px;
   background: #eee;
+  color: black;
+  padding: 2px 0;
 
   &:last-child {
     margin-bottom: 0;
