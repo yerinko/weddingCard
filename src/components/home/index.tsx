@@ -16,7 +16,6 @@ import YouTube from "react-youtube";
 import Modal from "@/components/common/Modal";
 import timeDiffFormat from "@/common/utils/timeDiffFormat";
 import coverPic from "@/public/photos/main.png";
-import developPic from "@/public/photos/developer.png";
 import hoya from "@/public/photos/hoya.png";
 import yerin from "@/public/photos/yerin.png";
 import mapPic from "../../../public/photos/map.png";
@@ -34,6 +33,9 @@ import WriteTalk from "./talk/WriteTalk";
 import EditTalk from "./talk/EditTalk";
 import QuickPinchZoom, { make3dTransformValue } from "react-quick-pinch-zoom";
 import { UpdateAction } from "react-quick-pinch-zoom/esm/PinchZoom/types";
+import PayCopy from "@/components/home/pay/PayCopy";
+import BridePayCopy from "@/components/home/pay/BridePayCopy";
+import PayModal from "@/components/common/PayModal";
 
 const Header = styled.h1`
   display: inline-block;
@@ -97,37 +99,6 @@ const CoverPicWrap = styled.div`
   border-radius: 50%;
   overflow: hidden;
   line-height: 0;
-`;
-
-const DevelopImg = styled.div`
-  width: 100%;
-  margin: 0 auto;
-  margin-bottom: 40px;
-  overflow: hidden;
-  line-height: 0;
-`;
-
-const LiveButton = styled.button`
-  padding: 8px 16px;
-  border: 0;
-  border-radius: 8px;
-  margin: 12px 10px;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  background: rgba(251, 185, 107);
-  animation: color-change 1s infinite;
-  @keyframes color-change {
-    0% {
-      background: rgba(251, 185, 107, 0.7);
-    }
-    50% {
-      background: rgb(251, 185, 107);
-    }
-    100% {
-      background: rgba(251, 185, 107, 0.7);
-    }
-  }
 `;
 
 const GreetingP = styled.p`
@@ -410,7 +381,80 @@ const WriteButtonTrigger = styled.div`
   top: 100px;
   height: 100%;
 `;
+const PayWrap = styled.button<{
+  party?: Party;
+  color?: string;
+  selected?: boolean;
+}>`
+  ${TextSansStyle}
+  left: 50%;
+  width: 100%;
+  max-width: calc(400px - 40px);
+  border: 0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  background: #eee;
 
+  &:last-child {
+    margin-bottom: 0;
+  }
+  > div {
+    line-height: 1.3;
+    display: flex;
+    white-space: pre-wrap;
+    text-align: left;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    display: inline-block;
+
+    div.bubble-info-wrap {
+      display: flex;
+      ${({ party }) =>
+        party === "BRIDE"
+          ? css`
+              flex-direction: row-reverse;
+            `
+          : css`
+              flex-direction: row;
+            `}
+      p {
+        white-space: pre-wrap;
+        text-align: left;
+        word-break: break-all;
+        overflow-wrap: break-word;
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 4px 0 0 0;
+        ${({ party }) =>
+          party === "BRIDE"
+            ? css`
+                border-radius: 20px 4px 20px 20px;
+                margin-left: 3px;
+              `
+            : css`
+                border-radius: 4px 20px 20px 20px;
+                margin-right: 3px;
+              `}
+        background: #eee;
+      }
+      small {
+        align-self: flex-end;
+        flex-shrink: 0;
+        color: #999;
+        font-size: 11px;
+      }
+    }
+    .edit {
+      font-size: 0.9em;
+      color: #999;
+      text-decoration: underline;
+    }
+    .view {
+      text-align: right;
+    }
+  }
+`;
 const TalkBubbleWrap = styled.div<{
   party: Party;
   color: string;
@@ -544,6 +588,8 @@ const Home = () => {
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [showWriteTalkModal, setShowWriteTalkModal] = useState(false);
   const [showEditTalkModal, setShowEditTalkModal] = useState<Talk>();
+  const [showGroomModal, setShowGroomModal] = useState(false);
+  const [showBrideModal, setShowBrideModal] = useState(false);
   const [isWriteButtonShown, setWriteButtonShown] = useState(false);
   const [lastClickedGalleryItem, setLastClickedGalleryItem] =
     useState<number>();
@@ -602,7 +648,16 @@ const Home = () => {
     mutate();
   };
   const handleEditTalkModalClose = () => setShowEditTalkModal(undefined);
-
+  const handleGroomModalClick = () => {
+    setShowGroomModal(true);
+  };
+  const handleBrideModalClick = () => {
+    setShowBrideModal(true);
+  };
+  const handlePayModalClose = () => {
+    setShowBrideModal(false);
+    setShowGroomModal(false);
+  };
   // @ts-ignore
   // @ts-ignore
   return (
@@ -751,14 +806,32 @@ const Home = () => {
         />
       </GiveWrap>
       <SectionHr />
-      <SectionHeader>마음 전하실 곳</SectionHeader>
+      <SectionHeader>축하의 마음 전하기</SectionHeader>
+      <p>
+        축하의 마음을 담아 축의금을 전달해 보세요.
+        <br />
+        버튼을 클릭해 계좌번호를 복사할 수 있습니다
+      </p>
       <GiveWrap>
         <p>
-          <strong>신부측</strong> (고정현)
-          <br />
-          <CopyText text="국민은행 787-21-0243-317" />
+          <PayWrap onClick={handleGroomModalClick}>
+            <div>
+              <div className="bubble-info-wrap">
+                <p className="view">🤵🏻 신랑측 마음 전하기</p>
+              </div>
+            </div>
+          </PayWrap>
+          <PayWrap onClick={handleBrideModalClick}>
+            <div>
+              <div className="bubble-info-wrap">
+                <p className="view">👰🏻‍♀️ 신부측 마음 전하기</p>
+              </div>
+            </div>
+          </PayWrap>
         </p>
+        <p></p>
       </GiveWrap>
+
       <SectionHr />
       <SectionHeader>축하의 한마디</SectionHeader>
       <WriteSectionSubHeader>
@@ -793,6 +866,17 @@ const Home = () => {
         <Modal handleClose={handleEditTalkModalClose}>
           <EditTalk talk={showEditTalkModal} onEdit={handleEditTalk} />
         </Modal>
+      )}
+      {showGroomModal && (
+        <Modal handleClose={handlePayModalClose}>
+          <PayCopy handleClose={handlePayModalClose} />
+        </Modal>
+      )}
+      {showBrideModal && (
+        <PayModal handleClose={handlePayModalClose}>
+          <BridePayCopy handleClose={handlePayModalClose} />
+          <p>ghkrd</p>
+        </PayModal>
       )}
     </Main>
   );
